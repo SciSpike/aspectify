@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - '10'
+before_deploy:
+  - npm run make-distribution
+  - cd $TRAVIS_BUILD_DIR/lib/main
+deploy:
+  provider: npm
+  email: npm@scispike.com
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: SciSpike/nodejs-support
+  api_key:
+    secure: kG6k7/mkXNGGGOpqcw38DlS0+aFqOjkfY9Gwy2rweP/kSVpRfU8FjIjfYeiPAAbfFvvaxpJAQW1U+SG7cPn5WnR/Kop2UcYc0dCIZwk7drd8hX90HIsGqGdLN5n2S62+vQW2fGdkC5doNrksu2DKtoU4HTwLNllS3QoyID6GZ5cCbogMq0gddlvo/XCNDPhgpjWTl4Bg5IuDZIHpi//NznxBK83m4NyQO3XndYvn8H3mHQbz2bMyfOLE0HBIiG6u2Btoe6QLiEoJxwsRKnSjGHH3D/g07u2Hm7dhrQUH3PDx2rlspvQlFv5GiJkXfLdSbp/1CZ0sc5n1K5gjMdjSSSR30I4UHtIn5UeL7QK9RJfbsEr7RgzX0HTr3GKxkriu2y7Cxy54fe0zivz7W5N5ZcCH6Qyz2iEZdGxC3wA5dxJjqwoIYE8g9Jd28U4en9CEfODAuRsRImg5VPTopRSAVwz+Ryi6mcW96fIamISsz8aumHOSmeACzc1rW7Nc/kidRf1wi/pbOEMT1AlFkGK/pK+WkMh0DWHM+uTXgvLWn2HLTi/SBN4AfQpTO8n5rBSR+BHo7n3z80O9xdjxGPJCEi7rzq8TNleOQxxLPJnhdHqkcdTuaTFC/HzeE4VjQYol3nvWUUDpTEaeXhLMi+HqPmqBA9nJGIqAowJ/on0YOzQ=

@@ -1,0 +1,92 @@
+{
+  "name": "@scispike/aspectify",
+  "version": "0.1.0",
+  "description": "Aspect-oriented programming (AOP) driven by decorators for Node.js",
+  "engines": {
+    "node": ">=10.12.0"
+  },
+  "scripts": {
+    "build": "run-s test",
+    "transpile": "run-s transpile-main transpile-test",
+    "transpile-main": "babel --delete-dir-on-start --verbose --out-dir lib/main --copy-files src/main",
+    "transpile-test": "babel --delete-dir-on-start --verbose --out-dir lib/test --copy-files src/test",
+    "unit-integration": "nyc --check-coverage --statements 86 --branches 77 --functions 83 --lines 91 -x 'lib/test' --exclude-after-remap false mocha --opts mocha.opts 'lib/test/unit/**/*.spec.js' 'lib/test/integration/**/*.spec.js'",
+    "postunit-integration": "run-s report",
+    "integration": "nyc --check-coverage -x 'lib/test' --exclude-after-remap false mocha --opts mocha.opts 'lib/test/integration/**/*.spec.js'",
+    "postintegration": "run-s report",
+    "i": "mocha --opts mocha.opts 'src/test/integration/**/*.spec.js' | npx bunyan",
+    "unit": "nyc --check-coverage -x 'lib/test' --exclude-after-remap false mocha --opts mocha.opts 'lib/test/unit/**/*.spec.js'",
+    "postunit": "run-s report",
+    "u": "mocha --opts mocha.opts 'src/test/unit/**/*.spec.js' | npx bunyan",
+    "test": "run-s transpile unit-integration lint",
+    "report": "nyc report --reporter=html",
+    "cov": "open coverage/index.html",
+    "lint": "standard --verbose 'src/**/*.js'",
+    "format": "standard --fix 'src/**/*.js'",
+    "make-distribution": "run-s transpile finalize-distribution",
+    "finalize-distribution": "copyfiles --verbose package.json package-lock.json README.md lib/main"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@babel/polyfill": "7.2.5"
+  },
+  "devDependencies": {
+    "@babel/cli": "7.2.3",
+    "@babel/core": "7.2.2",
+    "@babel/plugin-proposal-class-properties": "7.2.3",
+    "@babel/plugin-proposal-decorators": "7.2.3",
+    "@babel/plugin-proposal-optional-chaining": "7.2.0",
+    "@babel/preset-env": "7.2.3",
+    "@babel/register": "7.0.0",
+    "acorn": "6.0.4",
+    "babel-eslint": "10.0.1",
+    "chai": "4.2.0",
+    "copyfiles": "2.1.0",
+    "dirty-chai": "2.0.1",
+    "fs-extra": "7.0.1",
+    "intercept-stdout": "0.1.2",
+    "mocha": "5.2.0",
+    "npm-run-all": "4.1.5",
+    "nyc": "13.1.0",
+    "standard": "12.0.1"
+  },
+  "babel": {
+    "sourceMaps": "inline",
+    "retainLines": true,
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": true
+          }
+        }
+      ]
+    ],
+    "plugins": [
+      [
+        "@babel/plugin-proposal-optional-chaining",
+        {
+          "loose": false
+        }
+      ],
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
+    ]
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  }
+}

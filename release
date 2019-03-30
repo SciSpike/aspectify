@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+export NO_USE_LOCAL_FX=1
+export NO_USE_LOCAL_MATCH=1
+
+./release-nodejs $@
