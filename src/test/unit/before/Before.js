@@ -16,7 +16,7 @@ const Count = Before(thisJoinPoint => {
   counts[name] = (counts[name] || (counts[name] = 0)) + 1
 })
 
-class Advised {
+class Class {
   @Count
   static aStaticMethod () {}
 
@@ -31,10 +31,10 @@ class Advised {
 
 describe('before advice', function () {
   it('should work', function () {
-    Advised.aStaticMethod()
+    Class.aStaticMethod()
     expect(counts['aStaticMethod']).to.equal(1)
 
-    const it = new Advised()
+    const it = new Class()
     it.anInstanceMethod()
     expect(counts['anInstanceMethod']).to.equal(1)
 

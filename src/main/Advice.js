@@ -94,15 +94,15 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
   }
 }
 
-const Around = (advice, modify) => Advice({ modify, around: advice })
+const Around = (advice, modify) => Advice({ around: advice, modify })
 
-const Before = (advice, modify) => Advice({ modify, before: advice })
+const Before = (advice, modify) => Advice({ before: advice, modify })
 
-const AfterReturning = (advice, modify) => Advice({ modify, afterReturning: advice })
+const AfterReturning = (advice, modify) => Advice({ afterReturning: advice, modify })
 
-const AfterThrowing = (advice, modify) => Advice({ modify, afterThrowing: advice })
+const AfterThrowing = (advice, modify) => Advice({ afterThrowing: advice, modify })
 
-const AfterFinally = (advice, modify) => Advice({ modify, afterFinally: advice })
+const AfterFinally = (advice, modify) => Advice({ afterFinally: advice, modify })
 
 module.exports = {
   Around,
