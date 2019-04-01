@@ -23,6 +23,7 @@ describe('unit tests of asynchronous before advice', function () {
       const v = await c.go(10, 1)
       expect(v).to.equal(1)
     })
+
     it('subclass should work', async function () {
       class Subclass extends Class {
         async go (d, v) {
@@ -34,6 +35,7 @@ describe('unit tests of asynchronous before advice', function () {
       expect(v).to.equal(1)
     })
   })
+
   describe('parameterless before advice', function () {
     it('should work', async function () {
       let count = 0
@@ -55,6 +57,34 @@ describe('unit tests of asynchronous before advice', function () {
 
       const c = new Class()
       const v = await c.go(delay, val)
+      expect(count).to.equal(1)
+      expect(v).to.equal(val)
+    })
+  })
+
+  describe('parameterized before advice', function () {
+    it('should work', async function () {
+      let count = 0
+      const methodDelay = 10
+      const decoratorDelay = 100
+      expect(decoratorDelay).to.be.above(methodDelay)
+      const val = 1
+
+      const ParameterizedBeforeCount = (d = 0) => Before(async thisJoinPoint => {
+        await pause(d)
+        count++
+      })
+
+      class Class {
+        @ParameterizedBeforeCount(decoratorDelay)
+        async go (delayMillis, value) {
+          await pause(delayMillis)
+          return value
+        }
+      }
+
+      const c = new Class()
+      const v = await c.go(methodDelay, val)
       expect(count).to.equal(1)
       expect(v).to.equal(val)
     })
