@@ -9,6 +9,7 @@
  * @param afterFinally [{function}] Function that takes a `thisJointPoint` that runs after execution completes via `finally`.
  * @param around [{function}] Function that takes a `thisJointPoint` that leaves it to the developer to control behavior; no other advice functions are called.
  * @return {Function}
+ * @private
  */
 const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, around } = {}) => {
   return (clazz, name, originalDescriptor) => {
@@ -29,7 +30,7 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
         advised: advisedDescriptor
       }
     }
-    if (get || set) thisJoinPointStaticPart.property = true
+    if (get || set) thisJoinPointStaticPart.accessor = true
     if (value) thisJoinPointStaticPart.method = true
 
     if (modify) {
@@ -41,17 +42,22 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
         const thisJoinPoint = {
           thiz: this,
           args,
+          fullName: thisJoinPointStaticPart.name,
           ...thisJoinPointStaticPart
         }
-        if (thisJoinPointStaticPart.property) {
-          if (args.length === 0) thisJoinPoint.get = true
-          if (args.length === 1) thisJoinPoint.set = true
+        if (thisJoinPoint.accessor) {
+          if (args.length === 0) {
+            thisJoinPoint.get = thisJoinPoint.fullName = `get ${thisJoinPoint.name}`
+          } else {
+            thisJoinPoint.set = thisJoinPoint.fullName = `set ${thisJoinPoint.name}`
+          }
         }
 
         const proceed = ({ thiz, args: newArgs } = {}) => originalFn.apply(thiz || this, newArgs || args)
 
         if (around) {
-          return around({ proceed, thisJoinPoint })
+          thisJoinPoint.proceed = proceed
+          return around(thisJoinPoint)
         }
 
         let returnValue

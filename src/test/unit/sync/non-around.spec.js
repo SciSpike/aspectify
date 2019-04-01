@@ -204,7 +204,7 @@ class ClassUsingParameterizedAfterThrowingCount {
   testsAfterThrowing () { throw new Error(testsAfterThrowingMessage) }
 }
 
-describe('unit tests of advice', function () {
+describe('unit tests of synchronous advice', function () {
   beforeEach(() => {
     counts = {}
   })
