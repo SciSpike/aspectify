@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - '10'
+before_deploy:
+  - npm run make-distribution
+  - cd $TRAVIS_BUILD_DIR/lib/main
+deploy:
+  provider: npm
+  email: npm@scispike.com
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: SciSpike/aspectify
+  api_key:
+    secure: 2Xemqcuwb6eXY6ommyXgMiq/Ewpwyim5xWip28McP01y2MK49ICytpoYDE9yNHYhIPB4m+COwrTm6pmI0M5clEVxhq1qU8Ct73pot2yULiNFa2PFzrY+Ixk+goPLHy2DIiPRHHcMelcgiXqlwe+hWK2NbfOhOzpTjFW53rnNw4WwL9PxMyLEEI4V19CASS9EaPG3KwLlSqBfsJw2eUTntVub30s/hBEVTHpRYzByyeusXZo+7VVg9JgXG8N1uTy0IGQPysixf9h1oxaPUoA7xp48IQZLtUL0OSiw0KVeodGd+60yQ05JQNLu53nsrwAh+JZEhqiVeGTBZAa+eLE9zALU1SkT0fJ15OhHWv42NhH7RsAEjGcwTIed4NWQ5kbL7Ryhy48psdTDKjUScFPPumfSXOsBywELWX+pHUKAvwYGHtr447jzI1cxnAFlFguxSYoNTjFpOHoGYqAcMg/OTE+19kJO6FtF2xFQpuMeaZmHtb89D6bHSDrHlRq+8nvausuyfrTUvVRg5oGIIMugSqaMhrEkXc15kjKV6gm92qrqdFXmboLarh/aEY33wBwoZDq6R4m89pNUphpMe9P3U+wOit+RfW2TNf5xBfur0+qg6IH1VZz9iMDG+tyKlIrQOmhPVXT0W9MO+xKdg1HUZWAioFVzwVxuj6hBUCrC5/Q=
