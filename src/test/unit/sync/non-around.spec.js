@@ -8,8 +8,6 @@ chai.use(require('dirty-chai'))
 
 const { Before, AfterReturning, AfterFinally, AfterThrowing } = require('../../../main/Advice')
 
-// const pause = async (ms, value) => new Promise(resolve => setTimeout(() => resolve(value), ms))
-
 let counts = {}
 
 const count = (thisJoinPoint, step) => {
