@@ -5,45 +5,19 @@ const chai = require('chai')
 const expect = chai.expect
 chai.use(require('dirty-chai'))
 
-const { Before } = require('../../../main/Advice')
+const { AsyncBefore } = require('../../../main/Advice')
 
 const pause = require('./pause')
 
-class Class {
-  async go (delayMillis, value) {
-    await pause(delayMillis)
-    return value
-  }
-}
-
 describe('unit tests of asynchronous before advice', function () {
-  describe('base Class', function () {
-    it('should work', async function () {
-      const c = new Class()
-      const v = await c.go(10, 1)
-      expect(v).to.equal(1)
-    })
-
-    it('subclass should work', async function () {
-      class Subclass extends Class {
-        async go (d, v) {
-          return super.go(d, v)
-        }
-      }
-      const c = new Subclass()
-      const v = await c.go(10, 1)
-      expect(v).to.equal(1)
-    })
-  })
-
   describe('parameterless before advice', function () {
     it('should work', async function () {
       let count = 0
       const delay = 10
       const val = 1
 
-      const ParameterlessBeforeCount = Before(async thisJoinPoint => {
-        await pause(delay + 100)
+      const ParameterlessBeforeCount = AsyncBefore(async thisJoinPoint => {
+        await pause(delay + 10)
         count++
       })
 
@@ -66,11 +40,11 @@ describe('unit tests of asynchronous before advice', function () {
     it('should work', async function () {
       let count = 0
       const methodDelay = 10
-      const decoratorDelay = 100
+      const decoratorDelay = methodDelay + 10
       expect(decoratorDelay).to.be.above(methodDelay)
       const val = 1
 
-      const ParameterizedBeforeCount = (d = 0) => Before(async thisJoinPoint => {
+      const ParameterizedBeforeCount = (d = 0) => AsyncBefore(async thisJoinPoint => {
         await pause(d)
         count++
       })

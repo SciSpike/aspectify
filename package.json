@@ -27,7 +27,7 @@
     "transpile": "run-s transpile-main transpile-test",
     "transpile-main": "babel --delete-dir-on-start --verbose --out-dir lib/main --copy-files src/main",
     "transpile-test": "babel --delete-dir-on-start --verbose --out-dir lib/test --copy-files src/test",
-    "unit-integration": "nyc --check-coverage --statements 94 --branches 89 --functions 90 --lines 95 -x 'lib/test' --exclude-after-remap false mocha --opts mocha.opts 'lib/test/unit/**/*.spec.js' 'lib/test/integration/**/*.spec.js'",
+    "unit-integration": "nyc --check-coverage --statements 75 --branches 75 --functions 75 --lines 75 -x 'lib/test' --exclude-after-remap false mocha --opts mocha.opts 'lib/test/unit/**/*.spec.js' 'lib/test/integration/**/*.spec.js'",
     "postunit-integration": "run-s report",
     "integration": "nyc --check-coverage -x 'lib/test' --exclude-after-remap false mocha --opts mocha.opts 'lib/test/integration/**/*.spec.js'",
     "postintegration": "run-s report",

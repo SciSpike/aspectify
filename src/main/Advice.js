@@ -11,7 +11,7 @@
  * @return {Function}
  * @private
  */
-const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, around } = {}) => {
+const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, around, asyncAdvice } = {}) => {
   return (clazz, name, originalDescriptor) => {
     const advisedDescriptor = { ...originalDescriptor }
 
@@ -37,8 +37,8 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
       modify(thisJoinPointStaticPart)
     }
 
-    const createAdvisedFn = function (originalFn) {
-      return function advisedFn (...args) {
+    const createAdvisedFn = function (originalFn, asynchronous = false) {
+      const syncFn = function advisedFn (...args) {
         const thisJoinPoint = {
           thiz: this,
           args,
@@ -55,12 +55,13 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
 
         const proceed = ({ thiz, args: newArgs } = {}) => originalFn.apply(thiz || this, newArgs || args)
 
+        let returnValue
+
         if (around) {
           thisJoinPoint.proceed = proceed
           return around(thisJoinPoint)
         }
 
-        let returnValue
         let error
 
         try {
@@ -87,13 +88,67 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
           }
         }
       }
+
+      const asyncFn = async function advisedFn (...args) {
+        const thisJoinPoint = {
+          thiz: this,
+          args,
+          fullName: thisJoinPointStaticPart.name,
+          ...thisJoinPointStaticPart
+        }
+        if (thisJoinPoint.accessor) {
+          if (args.length === 0) {
+            thisJoinPoint.get = thisJoinPoint.fullName = `get ${thisJoinPoint.name}`
+          } else {
+            thisJoinPoint.set = thisJoinPoint.fullName = `set ${thisJoinPoint.name}`
+          }
+        }
+
+        const proceed = async ({ thiz, args: newArgs } = {}) => originalFn.apply(thiz || this, newArgs || args)
+
+        let returnValue
+
+        if (around) {
+          thisJoinPoint.proceed = proceed
+          returnValue = await around(thisJoinPoint)
+          return returnValue
+        }
+
+        let error
+
+        try {
+          if (before) {
+            await before(thisJoinPoint)
+          }
+
+          returnValue = await proceed()
+
+          if (afterReturning) {
+            await afterReturning({ returnValue, thisJoinPoint })
+          }
+
+          return returnValue
+        } catch (e) {
+          error = e
+          if (afterThrowing) {
+            await afterThrowing({ error, thisJoinPoint })
+          }
+          throw error
+        } finally {
+          if (afterFinally) {
+            await afterFinally({ returnValue, error, thisJoinPoint })
+          }
+        }
+      }
+
+      return asynchronous ? asyncFn : syncFn
     }
 
     if (value) {
-      advisedDescriptor.value = createAdvisedFn(value)
+      advisedDescriptor.value = createAdvisedFn(value, asyncAdvice)
     } else {
-      if (get) advisedDescriptor.get = createAdvisedFn(get)
-      if (set) advisedDescriptor.set = createAdvisedFn(set)
+      if (get) advisedDescriptor.get = createAdvisedFn(get, asyncAdvice)
+      if (set) advisedDescriptor.set = createAdvisedFn(set, asyncAdvice)
     }
 
     return advisedDescriptor
@@ -110,10 +165,25 @@ const AfterThrowing = (advice, modify) => Advice({ afterThrowing: advice, modify
 
 const AfterFinally = (advice, modify) => Advice({ afterFinally: advice, modify })
 
+const AsyncAround = (advice, modify) => Advice({ around: advice, modify, asyncAdvice: true })
+
+const AsyncBefore = (advice, modify) => Advice({ before: advice, modify, asyncAdvice: true })
+
+const AsyncAfterReturning = (advice, modify) => Advice({ afterReturning: advice, modify, asyncAdvice: true })
+
+const AsyncAfterThrowing = (advice, modify) => Advice({ afterThrowing: advice, modify, asyncAdvice: true })
+
+const AsyncAfterFinally = (advice, modify) => Advice({ afterFinally: advice, modify, asyncAdvice: true })
+
 module.exports = {
   Around,
   Before,
   AfterReturning,
   AfterThrowing,
-  AfterFinally
+  AfterFinally,
+  AsyncAround,
+  AsyncBefore,
+  AsyncAfterReturning,
+  AsyncAfterThrowing,
+  AsyncAfterFinally
 }
