@@ -1,7 +1,24 @@
 {
   "name": "@scispike/aspectify",
-  "version": "0.1.0-pre.1",
+  "version": "0.1.0-pre.2",
   "description": "Decorator-driven, aspect-oriented programming (AOP) for Node.js",
+  "homepage": "https://github.com/SciSpike/aspectify#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SciSpike/aspectify.git"
+  },
+  "keywords": [
+    "aspect-oriented programming",
+    "aop",
+    "advice",
+    "aspect",
+    "decorator",
+    "annotation",
+    "attribute",
+    "pointcut",
+    "joinpoint"
+  ],
+  "license": "MIT",
   "engines": {
     "node": ">=10.12.0"
   },
