@@ -30,7 +30,7 @@ const returnValues = {
 const anErrorMessage = 'boom'
 const testsAfterThrowingMessage = 'pow'
 
-const ParameterlessBeforeCount = Before(thisJoinPoint => count(thisJoinPoint, 1))
+const ParameterlessBeforeCount = Before(({ thisJoinPoint }) => count(thisJoinPoint, 1))
 const ParameterlessAfterReturningCount = AfterReturning(({ returnValue, thisJoinPoint }) => {
   if (!thisJoinPoint.set) expect(returnValue).to.equal(returnValues[thisJoinPoint.name])
   count(thisJoinPoint, 1)
@@ -46,7 +46,7 @@ const ParameterlessAfterThrowingCount = AfterThrowing(({ error, thisJoinPoint })
 })
 
 const ParameterizedBeforeCount = (step = 1) => {
-  return Before(thisJoinPoint => count(thisJoinPoint, step))
+  return Before(({ thisJoinPoint }) => count(thisJoinPoint, step))
 }
 const ParameterizedAfterReturningCount = (step = 1) => {
   return AfterReturning(({ returnValue, thisJoinPoint }) => {

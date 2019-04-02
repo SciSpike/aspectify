@@ -66,7 +66,7 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
 
         try {
           if (before) {
-            before(thisJoinPoint)
+            before({ thisJoinPoint })
           }
 
           returnValue = proceed()
@@ -118,7 +118,7 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
 
         try {
           if (before) {
-            await before(thisJoinPoint)
+            await before({ thisJoinPoint })
           }
 
           returnValue = await proceed()

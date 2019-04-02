@@ -36,7 +36,7 @@ describe('unit tests of asynchronous', function () {
     it('should work with AsyncBefore', async function () {
       let count = 0
 
-      const ParameterlessBeforeCount = AsyncBefore(async thisJoinPoint => {
+      const ParameterlessBeforeCount = AsyncBefore(async ({ thisJoinPoint }) => {
         assertThisJoinPoint(thisJoinPoint)
         await pause(adviceDelay)
         count++
@@ -184,7 +184,7 @@ describe('unit tests of asynchronous', function () {
     it('should work with AsyncBefore advice', async function () {
       let count = 0
 
-      const ParameterizedBeforeCount = (d = 0) => AsyncBefore(async thisJoinPoint => {
+      const ParameterizedBeforeCount = (d = 0) => AsyncBefore(async ({ thisJoinPoint }) => {
         assertThisJoinPoint(thisJoinPoint)
         await pause(d)
         count++
