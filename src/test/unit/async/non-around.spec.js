@@ -6,7 +6,7 @@ const expect = chai.expect
 const fail = expect.fail
 chai.use(require('dirty-chai'))
 
-const { AsyncBefore, AsyncAfterReturning, AsyncAfterThrowing, AsyncAfterFinally } = require('../../../main/Advice')
+const { AsyncBefore, Before, AsyncAfterReturning, AsyncAfterThrowing, AsyncAfterFinally } = require('../../../main/Advice')
 
 const pause = require('./pause')
 
@@ -181,6 +181,110 @@ describe('unit tests of asynchronous', function () {
   })
 
   describe('parameterized', function () {
+    it('should wait for AsyncBefore advice before proceeding into async advised method', async function () {
+      let count = 0
+      const initialValue = 'testing'
+      let value = initialValue
+
+      const FirstParameterizedBeforeCount = (d = 0, v) => AsyncBefore(async ({ thisJoinPoint }) => {
+        assertThisJoinPoint(thisJoinPoint)
+        await pause(d)
+        expect(value).to.equal(initialValue)
+        count++
+        value = v
+      })
+
+      const SecondParameterizedBeforeCount = (d = 0, v) => AsyncBefore(async ({ thisJoinPoint }) => {
+        assertThisJoinPoint(thisJoinPoint)
+        await pause(d)
+        expect(value).to.equal(b)
+        count++
+        value = v
+      })
+
+      const a = 'FirstParameterizedBeforeCountCompleted'
+      const b = 'firstCompleted'
+      const c = 'SecondParameterizedBeforeCountCompleted'
+      const d = 'secondCompleted'
+
+      class Class {
+        @FirstParameterizedBeforeCount(adviceDelay, a)
+        async first () {
+          expect(value).to.equal(a)
+          value = b
+          count++
+        }
+        @SecondParameterizedBeforeCount(adviceDelay, c)
+        async second () {
+          expect(value).to.equal(c)
+          value = d
+          count++
+        }
+      }
+
+      const it = new Class()
+
+      await it.first()
+      expect(value).to.equal(b)
+      expect(count).to.equal(2)
+
+      await it.second()
+      expect(value).to.equal(d)
+      expect(count).to.equal(4)
+    })
+
+    it('should wait for Before advice before proceeding into async advised method', async function () {
+      let count = 0
+      const initialValue = 'testing'
+      let value = initialValue
+
+      const FirstParameterizedBeforeCount = v => Before(({ thisJoinPoint }) => {
+        assertThisJoinPoint(thisJoinPoint)
+        expect(count).to.equal(0)
+        expect(value).to.equal(initialValue)
+        count++
+        value = v
+      })
+
+      const SecondParameterizedBeforeCount = v => Before(({ thisJoinPoint }) => {
+        assertThisJoinPoint(thisJoinPoint)
+        expect(count).to.equal(2)
+        expect(value).to.equal(b)
+        count++
+        value = v
+      })
+
+      const a = 'FirstParameterizedBeforeCountCompleted'
+      const b = 'firstCompleted'
+      const c = 'SecondParameterizedBeforeCountCompleted'
+      const d = 'secondCompleted'
+
+      class Class {
+        @FirstParameterizedBeforeCount(a)
+        async first () {
+          expect(value).to.equal(a)
+          value = b
+          count++
+        }
+        @SecondParameterizedBeforeCount(c)
+        async second () {
+          expect(value).to.equal(c)
+          value = d
+          count++
+        }
+      }
+
+      const it = new Class()
+
+      await it.first()
+      expect(value).to.equal(b)
+      expect(count).to.equal(2)
+
+      await it.second()
+      expect(value).to.equal(d)
+      expect(count).to.equal(4)
+    })
+
     it('should work with AsyncBefore advice', async function () {
       let count = 0
 
