@@ -84,6 +84,10 @@ $ node go.js
 ERROR: add threw Error: only numbers allowed
 ```
 
+>NOTE:
+If an advised method is synchronous (not `async`), then the advice _must_ also be synchronous.
+If an advised method is `async`, the advice may be synchronous _or_ `async`.
+
 ## What's an aspect?
 An aspect is composed of two things:  a pointcut & advice.
 
@@ -167,7 +171,9 @@ TODO
 TODO
 
 ### Synchronous v. Asynchronous Advice
-TODO
+>NOTE:
+If an advised method is synchronous (not `async`), then the advice _must_ also be synchronous.
+If an advised method is `async`, the advice may be synchronous _or_ `async`.
 
 ### Modifying the target class
 TODO
