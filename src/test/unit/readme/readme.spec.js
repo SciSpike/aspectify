@@ -5,7 +5,7 @@ const MyClass = require('./MyClass')
 
 const adder = new MyClass()
 
-describe('tl;dr', function () {
+describe('readme', function () {
   it('should work', function () {
     try {
       adder.add('a', 'b')

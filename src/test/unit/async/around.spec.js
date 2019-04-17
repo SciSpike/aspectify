@@ -141,7 +141,7 @@ describe('unit tests of asynchronous around advice', function () {
     beforeEach(function () {
       const advice = new CacheAdvice()
 
-      const JustReturn = value => AsyncAround(async thisJoinPoint => advice.advise(thisJoinPoint, value))
+      const JustReturn = value => AsyncAround(async (thisJoinPoint) => advice.advise(thisJoinPoint, value))
 
       class TestCounter extends Counter {
         @JustReturn(aValue)
