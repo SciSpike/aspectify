@@ -53,7 +53,7 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
           }
         }
 
-        const proceed = ({ thiz, args: newArgs } = {}) => originalFn.apply(thiz || this, newArgs || args)
+        const proceed = ({ thiz = undefined, args: newArgs = undefined } = {}) => originalFn.apply(thiz || this, newArgs || args)
 
         let returnValue
 

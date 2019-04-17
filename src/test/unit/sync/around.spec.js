@@ -125,7 +125,7 @@ describe('unit tests of synchronous around advice', function () {
     beforeEach(function () {
       const advice = new CacheAdvice()
 
-      const JustReturn = value => Around(thisJoinPoint => advice.advise(thisJoinPoint, value))
+      const JustReturn = value => Around((thisJoinPoint) => advice.advise(thisJoinPoint, value))
 
       class TestCounter extends Counter {
         @JustReturn(aValue)
