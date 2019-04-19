@@ -61,7 +61,7 @@ class CacheAdvice {
     this.advise = this.advise.bind(this)
   }
 
-  async advise (thisJoinPoint, value) {
+  async advise ({ thisJoinPoint, value }) {
     await pause(adviceDelay)
 
     if (thisJoinPoint.set) return thisJoinPoint.proceed()
@@ -100,7 +100,7 @@ describe('unit tests of asynchronous around advice', function () {
     beforeEach(function () {
       const advice = new CacheAdvice()
 
-      const Memoize = AsyncAround(advice.advise) // note that advise is bind()'ed!
+      const Memoize = AsyncAround(advice.advise)
 
       class TestCounter extends Counter {
         @Memoize
@@ -141,7 +141,7 @@ describe('unit tests of asynchronous around advice', function () {
     beforeEach(function () {
       const advice = new CacheAdvice()
 
-      const JustReturn = value => AsyncAround(async (thisJoinPoint) => advice.advise(thisJoinPoint, value))
+      const JustReturn = value => AsyncAround(async ({ thisJoinPoint }) => advice.advise({ thisJoinPoint, value }))
 
       class TestCounter extends Counter {
         @JustReturn(aValue)

@@ -123,22 +123,25 @@ If an advised method is `async`, the advice may be synchronous _or_ `async`.
 An aspect is composed of two things:  a pointcut & advice.
 
 ### What's a pointcut?
-A pointcut is the identification of where in your application code you want advice to be applied.
+A pointcut is an expression of those places in your application code you want advice to be applied.
 This library's inspiration, AspectJ, includes a complete pointcut expression language that allows you to pick out very precise points in your application code.
 You can think of it as a query language where the data is your source code.
-Pointcuts expressions result in joinpoints.
+Pointcut expressions result in a collection of zero or more joinpoints.
 A pointcut example in plain English could be "any method on any class starting with `foo`".
 
-> NOTE: Since this library is based _exclusively_ on decorators, the only kind of pointcuts supported are those where a particular decorator is present.
-That is, the pointcut is defined to be the location where that decorator is applied.
+Since this library is based _exclusively_ on decorators, the only kind of pointcuts supported are those where a particular decorator is present.
+In other words, you _only_ specify joinpoints explicitly via decorators; in other words, the placement of a decorator on a method is effectively identifying a joinpoint.
+
 While limiting, it also has the advantage of providing developers visual indications of incoming advice, without having to have an AOP-aware editor.
 
 ### What's a joinpoint?
-A joinpoint is a particular place in your code as identified by a pointcut.
+A joinpoint is a particular place in your code, as identified by a pointcut.
 Continuing the example above, if you have several classes with methods beginning with the string `foo`, each one would be a distinct joinpoint selected by your pointcut expression.
 
+Remember, in this implementation of AOP, the only joinpoints you can pick out are method executions (including property accessors, since those are also methods).
+
 ### What's advice?
-Advice is the code that runs at your joinpoints.
+Advice is simply the code that runs at your joinpoints.
 It's common for people to use the term "advice" in its plural form, "advices", so get used to that.
 
 #### Advice Types
@@ -161,54 +164,40 @@ A `thisJoinPointStaticPart` represents the information available at static analy
 It is an object with the following properties:
 
 * `clazz`: the class (prototype) of the joinpoint, as given by the JavaScript decorator infrastructure.
-* `name`: the `name` given by the JavaScript decorator infrastructure; for properties, it is just the property's name.
-* `descriptors.original`: the original descriptor as given by the JavaScript decorator infrastructure.
-* `descriptors.advised`: the new descriptor returned by the decorator function you are using (which is your chosen advice type).
+* `name`: the `name` given by the JavaScript decorator implementation; for properties, it is just the property's name _without_ the `get ` or `set ` prefix.
+* `descriptors.original`: the original [property descriptor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#Description) as given by the JavaScript decorator infrastructure.
+* `descriptors.advised`: the new [property descriptor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#Description) returned by the advice type that you're using (`Before`, `AfterReturning`, etc).
 * `accessor`: `true` if the joinpoint represents a JavaScript accessor (`get` or `set` method).
-* `method`: `true` if the joinpoint represents a method.
 
 ##### `thisJoinPoint`
 A `thisJoinPoint` includes everything in a `thisJoinPointStaticPart`, plus:
 
-* `thiz`: the context of the joinpoint; this may be a class instance or just a class if your joinpoint targets a `static` context.
-* `fullName`: same as `name`, except when the joinpoint is an accessor, in which case it's `get ...` or `set ...`. 
-* `args`: the arguments given at the joinpoint, as an array.
-* `proceed`: a function that is __only present if using `Around` or `AsyncAround` advice__ and allows execution to proceed into the target method.
+* `thiz`: the context of the joinpoint; it is either the class instance of the joinpoint, or a class if your joinpoint targets a `static` method.
+* `fullName`: same as `thisJoinPoint.name`, except when the joinpoint is an accessor, in which case it's `get ${thisJoinPoint.name}` or `set ${thisJoinPoint.name}`.
+* `args`: the arguments given to the advised method, as an array.
+* `proceed`: a function that is __only present if using `Around` or `AsyncAround` advice__, and provides you the ability to allow execution to proceed into the advised method.
 It takes a single object argument with optional keys:
-  * `thiz`: a value for `this` in the target method; defaults to `thisJoinPoint.thiz`.
-  * `args`: an array of arguments that the target method will be called with; defaults to `thisJoinPoint.args`.
+  * `thiz`: a value for the `this` reference in the advised method; defaults to `thisJoinPoint.thiz`.
+  * `args`: an array of arguments that the target advised will be called with; defaults to `thisJoinPoint.args`.
 * `get`: equal to `thisJoinPoint.fullName` if the invocation is of the `get` method of the accessor.
 * `set`: equal to `thisJoinPoint.fullName` if the invocation is of the `set` method of the accessor.
 
-The last two allow you to easily detect whether the get or set accessor method has been invoked and act accordingly.
-
-#### Around advice
-`Around` advice is the most powerful form of advice, allowing you to completely replace the behavior of the decorated method.
-
-Advice function signature: `function (thisJoinPoint) {}`
-
-In the case of `Around` advice, `thisJoinPoint` will also have a `proceed` function, that allows you to invoke the target method, optionally overriding the method's `this` reference and its arguments.
-See the documentation above for `thisJoinPoint` for more information.
-
->NOTE: The most common error when using `Around` advice is to forget to return the target method's return value after `proceed`ing.
-Remember to return a value if the target method does!
-
-Typical uses of `Around` advice include caching, memoization, transaction management, service level agreement enforcement, etc.
+The `thisJoinPoint.get` & `thisJoinPoint.set` allow you to easily detect whether the `get` or `set` accessor method has been invoked; just check the properties' [truthiness](https://developer.mozilla.org/en-US/docs/Glossary/Truthy).
 
 #### Before advice
 `Before` advice executes before the target method does.
 
-Advice function signature: `function ({thisJoinPoint}) {}`
+Advice function signature: `function ({ thisJoinPoint }) {}`
 
 `Before` advice allows you to do things _before_ the target method executes.
 The only way to prevent execution of the target method is to throw.
 
-Typical uses of `Before` advice include authorization, validation, etc.
+Typical uses of `Before` advice include authorization, validation, deprecation warnings, etc.
 
 #### AfterReturning advice
 `AfterReturning` advice executes only after the target method returns normally, that is, without throwing anything.
 
-Advice function signature: `function ({thisJoinPoint, returnValue}) {}`
+Advice function signature: `function ({ thisJoinPoint, returnValue }) {}`
 
 `AfterReturning` advice allows you to do things _after_ the target method returns normally.
 You cannot replace the return value, only modify it.
@@ -220,7 +209,7 @@ Typical uses of `AfterReturning` advice include compliance, data masking, etc.
 #### AfterThrowing advice
 `AfterThrowing` advice executes only after the target method throws anything, not returning normally.
 
-Advice function signature: `function ({thisJoinPoint, error}) {}`
+Advice function signature: `function ({ thisJoinPoint, error }) {}`
 
 `AfterThrowing` advice allows you to do things _after_ the target method has thrown something.
 You cannot replace the throwable.
@@ -232,7 +221,7 @@ Typical uses of `AfterThrowing` advice include compliance, error logging, etc.
 #### AfterFinally advice
 `AfterFinally` advice executes after the target method completes, whether via returning normally or throwing.
 
-Advice function signature: `function ({thisJoinPoint, returnValue, error}) {}`
+Advice function signature: `function ({ thisJoinPoint, returnValue, error }) {}`
 
 Only one of `returnValue` or `error` will be present, depending on whether the target method returned normally or threw, respectively.
 
@@ -243,12 +232,26 @@ You cannot replace the return value or throwable, only modify them.
 
 Typical uses of `AfterFinally` advice include timings, auditing, etc.
 
+#### Around advice
+`Around` advice is the most powerful form of advice, allowing you to completely replace the behavior of the decorated method.
+
+Advice function signature: `function ({ thisJoinPoint }) {}`
+
+In the case of `Around` advice, `thisJoinPoint` will also have a `proceed` function, that allows you to invoke the target method, optionally overriding the method's `this` reference and its arguments.
+See the documentation above for `thisJoinPoint` for more information.
+
+>NOTE: The most common error when using `Around` advice is to forget to return the target method's return value after `thisJoinPoint.proceed()`ing.
+Remember to return a value if the target method does!
+
+Typical uses of `Around` advice include caching, memoization, transaction management, method timings for service level agreement enforcement, etc.
+
 ## Defining Your Own Aspects
-There are basically two kinds of aspects:  parameterless & parameterized.
 Recall that an aspect is fundamentally a pointcut and advice.
 In this implementation of AOP, there is no pointcut expression language like in AspectJ.
-The pointcuts are simply the locations at which you place your decorators.
-Advice is the code that executes at your joinpoint, therefore, advice is just a function, as detailed above, that is given to your decorator.
+The joinpoints are simply the methods on which you place your decorators.
+
+Advice is the code that executes at your joinpoint.
+Therefore, advice is just a function, as detailed above, that is given to your decorator.
 
 The general idea is that you select the _least_ powerful kind of advice that you need (basically, only use `Around` advice if you absolutely need to).
 Then, provide one of `@scispike/aspectify`'s advice types your advice function.
@@ -256,8 +259,10 @@ Then, provide one of `@scispike/aspectify`'s advice types your advice function.
 >NOTE: For testability, it's a good idea to separate advice from decorators wherein they're used.
 That way, you can test your advice separately from the decorators in which it's used.
 
+There are basically two kinds of aspects:  parameterless & parameterized.
+
 ### Parameterless Aspect
-Here's an example of a parameterless `Before` aspect that enforces security by authorizing the current user to cancel appointments:
+Here's an example of a parameterless `Before` aspect that enforces security:
 ```js
 // in aspect file Secured.js
 
@@ -299,7 +304,7 @@ class Appointment {
 }
 ```
 
->NOTE: When intercepting accessors (that is, `get` & `set` methods of properties), only annotate one of the accessor methods.
+>NOTE: When intercepting accessors (that is, `get` & `set` methods of properties), only annotate _one_ of the accessor methods.
 
 Now, by simply using the class normally, unauthorized users will not be able to cancel appointments:
 ```js
@@ -316,7 +321,7 @@ appt.cancelled = true // throws Error if the user is not authorized to cancel th
 As a shameless plug, a good library to try is [`@scispike/nodej-support`](https://www.npmjs.com/package/@scispike/nodejs-support); specifically, `require('@scispike/nodejs-support/context/ClsHookedContext')`.
 
 ### Parameterized Aspects
-Here's an example of a parameterized `Before` aspect that enforces security by authorizing the current user to cancel appointments:
+Here's an example of a parameterized `Before` aspect that enforces security:
 ```js
 // in aspect file Secured.js
 
@@ -358,7 +363,7 @@ class Appointment {
 }
 ```
 
->NOTE: When intercepting accessors (that is, `get` & `set` methods of properties), only annotate one of the accessor methods.
+>NOTE: When intercepting accessors (that is, `get` & `set` methods of properties), only annotate _one_ of the accessor methods.
 
 Now, by simply using the class normally, unauthorized users will not be able to cancel appointments:
 ```js
@@ -374,7 +379,6 @@ appt.cancelled = true // throws Error if the user is not authorized to cancel th
 >TIP: Use continuation-local storage to put things like users into a context.
 As a shameless plug, a good library to try is [`@scispike/nodej-support`](https://www.npmjs.com/package/@scispike/nodejs-support); specifically, `require('@scispike/nodejs-support/context/ClsHookedContext')`.
 
-
 ### Synchronous v. Asynchronous Advice
 If an advised method is synchronous (not `async`), then the advice _must_ also be synchronous.
 
@@ -383,16 +387,22 @@ If an advised method is `async`, the advice may be synchronous _or_ `async`.
 ## Tips, Tricks & Best Practices
 ### Intercepting constructors
 Sorry, you currently can't intercept constructor execution, but there _is_ an alternative pattern.
-Simply define a static factory method on your class, and intercept that:
+Simply define a static factory method on your class, and intercept _that_:
 ```js
 const Secured = require('./Secured')
 
 class Appointment {
+  /**
+   * Constructs a new Appointment instance.
+   */
   @Secured
   static new (begin, end, notes) {
     return new Appointment(begin, end, notes)
   }
   
+  /**
+   * @private
+   */
   constructor(begin, end, notes) {
     // ...
   }
@@ -401,9 +411,11 @@ class Appointment {
 
 ### Intercepting property accessors
 The current decorator specification behaves in such a way that you can only decorate either the `get` or `set` method, not both.
-This implementation provides as much information as possible at runtime for you to be able to detect which accessor was called.
-If `thisJoinPoint.set` is truthy, then the `set` accessor was called and `thisJoinPoint.fullName` starts with `set `.
-If `thisJoinPoint.get` is truthy, then the `get` accessor was called and `thisJoinPoint.fullName` starts with `get `.
+This implementation provides as much information as possible at design time and runtime for you to be able to detect which accessor was decorated and called, respectively.
+
+At design time, `thisJoinPointStaticPart.accessor` is truthy if the decorated method is an accessor.
+
+At runtime, if `thisJoinPoint.set` is truthy, then the `set` accessor was called and `thisJoinPoint.fullName` starts with `set `, and if `thisJoinPoint.get` is truthy, then the `get` accessor was called and `thisJoinPoint.fullName` starts with `get `.
 
 ## Modifying the target class
 >NOTE: this is an advanced topic.
