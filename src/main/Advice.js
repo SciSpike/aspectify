@@ -31,7 +31,6 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
       }
     }
     if (get || set) thisJoinPointStaticPart.accessor = true
-    if (value) thisJoinPointStaticPart.method = true
 
     if (modify) {
       modify(thisJoinPointStaticPart)
@@ -59,7 +58,7 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
 
         if (around) {
           thisJoinPoint.proceed = proceed
-          return around(thisJoinPoint)
+          return around({ thisJoinPoint })
         }
 
         let error
@@ -110,7 +109,7 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
 
         if (around) {
           thisJoinPoint.proceed = proceed
-          returnValue = await around(thisJoinPoint)
+          returnValue = await around({ thisJoinPoint })
           return returnValue
         }
 
