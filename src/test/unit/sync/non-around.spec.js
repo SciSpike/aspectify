@@ -30,40 +30,60 @@ const returnValues = {
 const anErrorMessage = 'boom'
 const testsAfterThrowingMessage = 'pow'
 
-const ParameterlessBeforeCount = Before(({ thisJoinPoint }) => count(thisJoinPoint, 1))
+const ParameterlessBeforeCount = Before(({ thisJoinPoint }) => {
+  if (thisJoinPoint.fullName === 'aStaticMethod') expect(thisJoinPoint.static).to.be.true()
+  else expect(thisJoinPoint.static).to.be.false()
+  count(thisJoinPoint, 1)
+})
 const ParameterlessAfterReturningCount = AfterReturning(({ returnValue, thisJoinPoint }) => {
   if (!thisJoinPoint.set) expect(returnValue).to.equal(returnValues[thisJoinPoint.name])
+  if (thisJoinPoint.fullName === 'aStaticMethod') expect(thisJoinPoint.static).to.be.true()
+  else expect(thisJoinPoint.static).to.be.false()
   count(thisJoinPoint, 1)
 })
 const ParameterlessAfterFinallyCount = AfterFinally(({ returnValue, error, thisJoinPoint }) => {
   if (!thisJoinPoint.set) expect(returnValue).to.equal(returnValues[thisJoinPoint.name])
-  if (thisJoinPoint.name === 'aThrowingMethod') expect(error?.message).to.equal(anErrorMessage)
+  if (thisJoinPoint.fullName === 'aThrowingMethod') expect(error?.message).to.equal(anErrorMessage)
+  if (thisJoinPoint.fullName === 'aStaticMethod') expect(thisJoinPoint.static).to.be.true()
+  else expect(thisJoinPoint.static).to.be.false()
   count(thisJoinPoint, 1)
 })
 const ParameterlessAfterThrowingCount = AfterThrowing(({ error, thisJoinPoint }) => {
-  if (thisJoinPoint.name === 'testsAfterThrowing') expect(error?.message).to.equal(testsAfterThrowingMessage)
+  if (thisJoinPoint.fullName === 'testsAfterThrowing') expect(error?.message).to.equal(testsAfterThrowingMessage)
+  if (thisJoinPoint.fullName === 'aStaticMethod') expect(thisJoinPoint.static).to.be.true()
+  else expect(thisJoinPoint.static).to.be.false()
   count(thisJoinPoint, 1)
 })
 
 const ParameterizedBeforeCount = (step = 1) => {
-  return Before(({ thisJoinPoint }) => count(thisJoinPoint, step))
+  return Before(({ thisJoinPoint }) => {
+    if (thisJoinPoint.fullName === 'aStaticMethod') expect(thisJoinPoint.static).to.be.true()
+    else expect(thisJoinPoint.static).to.be.false()
+    count(thisJoinPoint, step)
+  })
 }
 const ParameterizedAfterReturningCount = (step = 1) => {
   return AfterReturning(({ returnValue, thisJoinPoint }) => {
     if (!thisJoinPoint.set) expect(returnValue).to.equal(returnValues[thisJoinPoint.name])
+    if (thisJoinPoint.fullName === 'aStaticMethod') expect(thisJoinPoint.static).to.be.true()
+    else expect(thisJoinPoint.static).to.be.false()
     count(thisJoinPoint, step)
   })
 }
 const ParameterizedAfterFinallyCount = (step = 1) => {
   return AfterFinally(({ returnValue, error, thisJoinPoint }) => {
     if (!thisJoinPoint.set) expect(returnValue).to.equal(returnValues[thisJoinPoint.name])
-    if (thisJoinPoint.name === 'aThrowingMethod') expect(error?.message).to.equal(anErrorMessage)
+    if (thisJoinPoint.fullName === 'aThrowingMethod') expect(error?.message).to.equal(anErrorMessage)
+    if (thisJoinPoint.fullName === 'aStaticMethod') expect(thisJoinPoint.static).to.be.true()
+    else expect(thisJoinPoint.static).to.be.false()
     count(thisJoinPoint, step)
   })
 }
 const ParameterizedAfterThrowingCount = (step = 1) => {
   return AfterThrowing(({ error, thisJoinPoint }) => {
-    if (thisJoinPoint.name === 'testsAfterThrowing') expect(error?.message).to.equal(testsAfterThrowingMessage)
+    if (thisJoinPoint.fullName === 'testsAfterThrowing') expect(error?.message).to.equal(testsAfterThrowingMessage)
+    if (thisJoinPoint.fullName === 'aStaticMethod') expect(thisJoinPoint.static).to.be.true()
+    else expect(thisJoinPoint.static).to.be.false()
     count(thisJoinPoint, step)
   })
 }

@@ -173,6 +173,7 @@ It is an object with the following properties:
 A `thisJoinPoint` includes everything in a `thisJoinPointStaticPart`, plus:
 
 * `thiz`: the context of the joinpoint; it is either the class instance of the joinpoint, or a class if your joinpoint targets a `static` method.
+* `static`: if `true`, the context of the joinpoint is a static method, else it's `false`
 * `fullName`: same as `thisJoinPoint.name`, except when the joinpoint is an accessor, in which case it's `get ${thisJoinPoint.name}` or `set ${thisJoinPoint.name}`.
 * `args`: the arguments given to the advised method, as an array.
 * `proceed`: a function that is __only present if using `Around` or `AsyncAround` advice__, and provides you the ability to allow execution to proceed into the advised method.

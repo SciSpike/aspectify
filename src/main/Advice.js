@@ -51,6 +51,7 @@ const Advice = ({ modify, before, afterReturning, afterThrowing, afterFinally, a
             thisJoinPoint.set = thisJoinPoint.fullName = `set ${thisJoinPoint.name}`
           }
         }
+        thisJoinPoint.static = !thisJoinPoint.thiz || thisJoinPoint?.thiz === thisJoinPoint?.clazz
 
         const proceed = ({ thiz = undefined, args: newArgs = undefined } = {}) => originalFn.apply(thiz || this, newArgs || args)
 
