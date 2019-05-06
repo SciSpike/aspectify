@@ -42,7 +42,10 @@
     "lint": "standard --verbose 'src/**/*.js'",
     "format": "standard --fix 'src/**/*.js'",
     "make-distribution": "run-s transpile finalize-distribution",
-    "finalize-distribution": "copyfiles --verbose package.json package-lock.json README.md lib/main"
+    "finalize-distribution": "copyfiles --verbose package.json package-lock.json README.md lib/main",
+    "prelink": "run-s make-distribution",
+    "link": "cd lib/main && npm link; cd ../..",
+    "unlink": "cd lib/main && npm unlink; cd ../.."
   },
   "publishConfig": {
     "access": "public"
