@@ -78,7 +78,7 @@ describe('unit tests of synchronous around advice', function () {
   })
 
   describe('parameterless around advice', function () {
-    let counter = new Counter()
+    const counter = new Counter()
     let testCounter
 
     beforeEach(function () {
@@ -118,9 +118,9 @@ describe('unit tests of synchronous around advice', function () {
   })
 
   describe('parameterized around advice', function () {
-    let counter = new Counter()
+    const counter = new Counter()
     let testCounter
-    let aValue = 42
+    const aValue = 42
 
     beforeEach(function () {
       const advice = new CacheAdvice()
