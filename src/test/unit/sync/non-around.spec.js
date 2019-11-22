@@ -229,12 +229,12 @@ describe('unit tests of synchronous advice', function () {
 
   it('should work using parameterless before advice', function () {
     let rv = ClassUsingParameterlessBeforeCount.aStaticMethod()
-    expect(counts['aStaticMethod']).to.equal(1)
+    expect(counts.aStaticMethod).to.equal(1)
     expect(rv).to.equal(aStaticMethodReturnValue)
 
     const it = new ClassUsingParameterlessBeforeCount()
     rv = it.anInstanceMethod()
-    expect(counts['anInstanceMethod']).to.equal(1)
+    expect(counts.anInstanceMethod).to.equal(1)
     expect(rv).to.equal(anInstanceMethodReturnValue)
 
     it.aProperty = aPropertyValue
@@ -251,17 +251,17 @@ describe('unit tests of synchronous advice', function () {
     } catch (e) {
       expect(e.message).to.equal(anErrorMessage)
     }
-    expect(counts['aThrowingMethod']).to.equal(1)
+    expect(counts.aThrowingMethod).to.equal(1)
   })
 
   it('should work using parameterized before advice', function () {
     let rv = ClassUsingParameterizedBeforeCount.aStaticMethod()
-    expect(counts['aStaticMethod']).to.equal(aStaticMethodStep)
+    expect(counts.aStaticMethod).to.equal(aStaticMethodStep)
     expect(rv).to.equal(aStaticMethodReturnValue)
 
     const it = new ClassUsingParameterizedBeforeCount()
     rv = it.anInstanceMethod()
-    expect(counts['anInstanceMethod']).to.equal(anInstanceMethodStep)
+    expect(counts.anInstanceMethod).to.equal(anInstanceMethodStep)
     expect(rv).to.equal(anInstanceMethodReturnValue)
 
     it.aProperty = aPropertyValue
@@ -278,17 +278,17 @@ describe('unit tests of synchronous advice', function () {
     } catch (e) {
       expect(e.message).to.equal(anErrorMessage)
     }
-    expect(counts['aThrowingMethod']).to.equal(aThrowingMethodStep)
+    expect(counts.aThrowingMethod).to.equal(aThrowingMethodStep)
   })
 
   it('should work using parameterless afterReturning advice', function () {
     let rv = ClassUsingParameterlessAfterReturningCount.aStaticMethod()
-    expect(counts['aStaticMethod']).to.equal(1)
+    expect(counts.aStaticMethod).to.equal(1)
     expect(rv).to.equal(aStaticMethodReturnValue)
 
     const it = new ClassUsingParameterlessAfterReturningCount()
     rv = it.anInstanceMethod()
-    expect(counts['anInstanceMethod']).to.equal(1)
+    expect(counts.anInstanceMethod).to.equal(1)
     expect(rv).to.equal(anInstanceMethodReturnValue)
 
     it.aProperty = aPropertyValue
@@ -305,17 +305,17 @@ describe('unit tests of synchronous advice', function () {
     } catch (e) {
       expect(e.message).to.equal(anErrorMessage)
     }
-    expect(counts['aThrowingMethod']).not.to.be.ok()
+    expect(counts.aThrowingMethod).not.to.be.ok()
   })
 
   it('should work using parameterized afterReturning advice', function () {
     let rv = ClassUsingParameterizedAfterReturningCount.aStaticMethod()
-    expect(counts['aStaticMethod']).to.equal(aStaticMethodStep)
+    expect(counts.aStaticMethod).to.equal(aStaticMethodStep)
     expect(rv).to.equal(aStaticMethodReturnValue)
 
     const it = new ClassUsingParameterizedAfterReturningCount()
     rv = it.anInstanceMethod()
-    expect(counts['anInstanceMethod']).to.equal(anInstanceMethodStep)
+    expect(counts.anInstanceMethod).to.equal(anInstanceMethodStep)
     expect(rv).to.equal(anInstanceMethodReturnValue)
 
     it.aProperty = aPropertyValue
@@ -332,17 +332,17 @@ describe('unit tests of synchronous advice', function () {
     } catch (e) {
       expect(e.message).to.equal(anErrorMessage)
     }
-    expect(counts['aThrowingMethod']).not.to.be.ok()
+    expect(counts.aThrowingMethod).not.to.be.ok()
   })
 
   it('should work using parameterless afterFinally advice', function () {
     let rv = ClassUsingParameterlessAfterFinallyCount.aStaticMethod()
-    expect(counts['aStaticMethod']).to.equal(1)
+    expect(counts.aStaticMethod).to.equal(1)
     expect(rv).to.equal(aStaticMethodReturnValue)
 
     const it = new ClassUsingParameterlessAfterFinallyCount()
     rv = it.anInstanceMethod()
-    expect(counts['anInstanceMethod']).to.equal(1)
+    expect(counts.anInstanceMethod).to.equal(1)
     expect(rv).to.equal(anInstanceMethodReturnValue)
 
     it.aProperty = aPropertyValue
@@ -359,17 +359,17 @@ describe('unit tests of synchronous advice', function () {
     } catch (e) {
       expect(e.message).to.equal(anErrorMessage)
     }
-    expect(counts['aThrowingMethod']).to.equal(1)
+    expect(counts.aThrowingMethod).to.equal(1)
   })
 
   it('should work using parameterized afterFinally advice', function () {
     let rv = ClassUsingParameterizedAfterFinallyCount.aStaticMethod()
-    expect(counts['aStaticMethod']).to.equal(aStaticMethodStep)
+    expect(counts.aStaticMethod).to.equal(aStaticMethodStep)
     expect(rv).to.equal(aStaticMethodReturnValue)
 
     const it = new ClassUsingParameterizedAfterFinallyCount()
     rv = it.anInstanceMethod()
-    expect(counts['anInstanceMethod']).to.equal(anInstanceMethodStep)
+    expect(counts.anInstanceMethod).to.equal(anInstanceMethodStep)
     expect(rv).to.equal(anInstanceMethodReturnValue)
 
     it.aProperty = aPropertyValue
@@ -386,17 +386,17 @@ describe('unit tests of synchronous advice', function () {
     } catch (e) {
       expect(e.message).to.equal(anErrorMessage)
     }
-    expect(counts['aThrowingMethod']).to.equal(aThrowingMethodStep)
+    expect(counts.aThrowingMethod).to.equal(aThrowingMethodStep)
   })
 
   it('should work using parameterless afterThrowing advice', function () {
     let rv = ClassUsingParameterlessAfterThrowingCount.aStaticMethod()
-    expect(counts['aStaticMethod']).not.to.be.ok()
+    expect(counts.aStaticMethod).not.to.be.ok()
     expect(rv).to.equal(aStaticMethodReturnValue)
 
     const it = new ClassUsingParameterlessAfterThrowingCount()
     rv = it.anInstanceMethod()
-    expect(counts['anInstanceMethod']).not.to.be.ok()
+    expect(counts.anInstanceMethod).not.to.be.ok()
     expect(rv).to.equal(anInstanceMethodReturnValue)
 
     it.aProperty = aPropertyValue
@@ -413,17 +413,17 @@ describe('unit tests of synchronous advice', function () {
     } catch (e) {
       expect(e.message).to.equal(testsAfterThrowingMessage)
     }
-    expect(counts['testsAfterThrowing']).to.equal(1)
+    expect(counts.testsAfterThrowing).to.equal(1)
   })
 
   it('should work using parameterized afterThrowing advice', function () {
     let rv = ClassUsingParameterizedAfterThrowingCount.aStaticMethod()
-    expect(counts['aStaticMethod']).not.to.be.ok()
+    expect(counts.aStaticMethod).not.to.be.ok()
     expect(rv).to.equal(aStaticMethodReturnValue)
 
     const it = new ClassUsingParameterizedAfterThrowingCount()
     rv = it.anInstanceMethod()
-    expect(counts['anInstanceMethod']).not.to.be.ok()
+    expect(counts.anInstanceMethod).not.to.be.ok()
     expect(rv).to.equal(anInstanceMethodReturnValue)
 
     it.aProperty = aPropertyValue
@@ -440,6 +440,6 @@ describe('unit tests of synchronous advice', function () {
     } catch (e) {
       expect(e.message).to.equal(testsAfterThrowingMessage)
     }
-    expect(counts['testsAfterThrowing']).to.equal(testsAfterThrowingStep)
+    expect(counts.testsAfterThrowing).to.equal(testsAfterThrowingStep)
   })
 })

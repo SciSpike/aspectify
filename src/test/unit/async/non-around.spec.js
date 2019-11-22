@@ -48,6 +48,7 @@ describe('unit tests of asynchronous', function () {
           await pause(delayMillis)
           return value
         }
+
         @ParameterlessBeforeCount
         async doesThrow (delayMillis, value) {
           await pause(delayMillis)
@@ -85,6 +86,7 @@ describe('unit tests of asynchronous', function () {
           await pause(delayMillis)
           return value
         }
+
         @ParameterlessAfterReturningCount
         async doesThrow (delayMillis, value) {
           await pause(delayMillis)
@@ -122,6 +124,7 @@ describe('unit tests of asynchronous', function () {
           await pause(delayMillis)
           return value
         }
+
         @ParameterlessAfterThrowingCount
         async doesThrow (delayMillis, value) {
           await pause(delayMillis)
@@ -158,6 +161,7 @@ describe('unit tests of asynchronous', function () {
           await pause(delayMillis)
           return value
         }
+
         @ParameterlessAfterFinallyCount
         async doesThrow (delayMillis, value) {
           await pause(delayMillis)
@@ -214,6 +218,7 @@ describe('unit tests of asynchronous', function () {
           value = b
           count++
         }
+
         @SecondParameterizedBeforeCount(adviceDelay, c)
         async second () {
           expect(value).to.equal(c)
@@ -266,6 +271,7 @@ describe('unit tests of asynchronous', function () {
           value = b
           count++
         }
+
         @SecondParameterizedBeforeCount(c)
         async second () {
           expect(value).to.equal(c)
@@ -300,6 +306,7 @@ describe('unit tests of asynchronous', function () {
           await pause(delayMillis)
           return value
         }
+
         @ParameterizedBeforeCount(adviceDelay)
         async doesThrow (delayMillis, value) {
           await pause(delayMillis)
@@ -337,6 +344,7 @@ describe('unit tests of asynchronous', function () {
           await pause(delayMillis)
           return value
         }
+
         @ParameterizedAfterReturningCount(adviceDelay)
         async doesThrow (delayMillis, value) {
           await pause(delayMillis)
@@ -374,6 +382,7 @@ describe('unit tests of asynchronous', function () {
           await pause(delayMillis)
           return value
         }
+
         @ParameterizedAfterThrowingCount(adviceDelay)
         async doesThrow (delayMillis, value) {
           await pause(delayMillis)
@@ -410,6 +419,7 @@ describe('unit tests of asynchronous', function () {
           await pause(delayMillis)
           return value
         }
+
         @ParameterizedAfterFinallyCount(adviceDelay)
         async doesThrow (delayMillis, value) {
           await pause(delayMillis)
