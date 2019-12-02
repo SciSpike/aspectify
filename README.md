@@ -1,4 +1,11 @@
 # `aspectify`
+
+> DEPRECATION NOTE:
+> Since the time this package was created, SciSpike has been acquired by [Northscaler](https://www.northscaler.com).
+> There will be no further development on this module.
+> Instead, development will continue at [@northscaler/aspectify](https://www.npmjs.com/package/@northscaler/aspectify).
+> You can see all of Northscaler's public Node.js modules at https://www.npmjs.com/search?q=%40northscaler.
+
 This package contains an implementation of _exclusively decorator-driven_ aspect-oriented programming (AOP).
 It's similar in spirit to AspectJ's annotation-driven approach, whereby advised methods carry a visual indicator in the source that there is incoming behavior.
 In this way, there is no need for a special, AOP-aware editor for the developer to know when there is incoming advice.
