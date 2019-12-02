@@ -1,6 +1,6 @@
 {
   "name": "@scispike/aspectify",
-  "version": "1.0.2",
+  "version": "1.0.3-rc.0",
   "description": "Decorator-driven, aspect-oriented programming (AOP) for Node.js",
   "homepage": "https://github.com/SciSpike/aspectify#readme",
   "repository": {
